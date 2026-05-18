@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model orders {
+  id      Int      @id @default(autoincrement())
+  user_id Int?
+  amount  Decimal? @db.Decimal(10, 2)
+  status  String?  @db.VarChar(50)
+  users   users?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model student {
+  id       Int       @id @default(autoincrement())
+  name     String?   @db.VarChar(100)
+  email    String?   @db.VarChar(100)
+  city     String?   @db.VarChar(100)
+  class    String?   @db.VarChar(100)
+  teacher  Int?
+  teachers teachers? @relation(fields: [teacher], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model students {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(100)
+  email      String?   @unique @db.VarChar(100)
+  city       String?   @db.VarChar(100)
+  class      String?   @db.VarChar(20)
+  teacher_id Int?
+  teachers   teachers? @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model teachers {
+  id         Int        @id @default(autoincrement())
+  name       String?    @db.VarChar(100)
+  email      String?    @db.VarChar(100)
+  subject    String?    @db.VarChar(100)
+  experience Int?
+  student    student[]
+  students   students[]
+}
+
+model users {
+  id     Int      @id @default(autoincrement())
+  name   String?  @db.VarChar(100)
+  email  String?  @unique @db.VarChar(100)
+  city   String?  @db.VarChar(100)
+  orders orders[]
+}
